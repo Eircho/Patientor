@@ -5,6 +5,6 @@ content-type: application/json
     "name": "Test",
     "dateOfBirth": "Test",
     "ssn": "Test",
-    "gender": "Test",
+    "gender": "male",
     "occupation": "Test"
 }
