@@ -1,8 +1,12 @@
-import { Box, Table, TableHead, Typography, TableCell, TableRow, TableBody } from '@mui/material';
+import { Box, Table, TableHead, Typography, TableCell, TableRow, TableBody, Button } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { Patient, Diagnosis } from '../../types';
+import { useState } from 'react';
+import axios from 'axios';
+import patientService from '../../services/patients'
+import { Patient, Diagnosis, EntryFormValues } from '../../types';
 import HealthRatingBar from '../HealthRatingBar';
 import Entry from './Entry';
+import AddEntryModal from './AddEntryModal';
 
 interface Props {
     patients: Patient[],
@@ -10,6 +14,35 @@ interface Props {
 }
 
 const PatientPage = ({ patients, diagnoses }: Props) => {
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [error, setError] = useState<string>();
+
+    const openModal = (): void => setModalOpen(true);
+
+    const closeModal = (): void => {
+        setModalOpen(false);
+        setError(undefined);
+    };
+
+    const submitNewPatient = async (values: EntryFormValues) => {
+        try {
+          await patientService.getAll();
+        } catch (e: unknown) {
+          if (axios.isAxiosError(e)) {
+            if (e?.response?.data && typeof e?.response?.data === "string") {
+              const message = e.response.data.replace('Something went wrong. Error: ', '');
+              console.error(message);
+              setError(message);
+            } else {
+              setError("Unrecognized axios error");
+            }
+          } else {
+            console.error("Unknown error", e);
+            setError("Unknown error");
+          }
+        }
+    };
+
     const id = useParams().id;
 
     const patient = patients.find(p => p.id === id);
@@ -52,6 +85,15 @@ const PatientPage = ({ patients, diagnoses }: Props) => {
             </Table>
 
             <h3>Entries</h3>
+            <AddEntryModal
+                modalOpen={modalOpen}
+                onSubmit={submitNewPatient}
+                error={error}
+                onClose={closeModal}
+            />
+            <Button variant="contained" onClick={() => openModal()}>
+                Add New Entry
+            </Button>
             {patient.entries.map(e => 
                 <Entry entry={e} diagnoses={patientDiagnoses} key={e.id}/>
             )}
