@@ -10,10 +10,11 @@ import AddEntryModal from './AddEntryModal';
 
 interface Props {
     patients: Patient[],
+    setPatients: React.Dispatch<React.SetStateAction<Patient[]>>,
     diagnoses: Diagnosis[]
 }
 
-const PatientPage = ({ patients, diagnoses }: Props) => {
+const PatientPage = ({ patients, setPatients, diagnoses }: Props) => {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [error, setError] = useState<string>();
 
@@ -26,7 +27,13 @@ const PatientPage = ({ patients, diagnoses }: Props) => {
 
     const submitNewPatient = async (values: EntryFormValues) => {
         try {
-          await patientService.getAll();
+          const entry = await patientService.createEntry(values, id);
+          const patient = patients.find(p => p.id === id);
+          if (patient) {
+            patient?.entries.push(entry);
+            setPatients(patients.map(p => p.id === patient.id ? patient : p));
+            setModalOpen(false);
+          }
         } catch (e: unknown) {
           if (axios.isAxiosError(e)) {
             if (e?.response?.data && typeof e?.response?.data === "string") {

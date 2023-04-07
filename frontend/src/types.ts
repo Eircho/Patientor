@@ -17,10 +17,10 @@ export enum EntryType {
 }
 
 export enum HealthCheckRating {
-  "Healthy" = 0,
-  "LowRisk" = 1,
-  "HighRisk" = 2,
-  "CriticalRisk" = 3
+  Healthy = "Healthy",
+  LowRisk = "Low Risk",
+  HighRisk = "High Risk",
+  CriticalRisk = "Critical Risk"
 }
 
 export interface Discharge {
