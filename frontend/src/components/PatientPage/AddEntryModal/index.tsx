@@ -1,7 +1,7 @@
 import { Dialog, DialogTitle, DialogContent, Divider, Alert, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 
 import AddEntryForm from './AddEntryForm';
-import { EntryFormValues, EntryType } from '../../../types';
+import { EntryFormValues, EntryType, Diagnosis } from '../../../types';
 import { useState } from 'react';
 
 interface Props {
@@ -9,9 +9,10 @@ interface Props {
   onClose: () => void;
   onSubmit: (values: EntryFormValues) => void;
   error?: string;
+  diagnoses: Diagnosis[]
 }
 
-const AddEntryModal = ({ modalOpen, onClose, onSubmit, error }: Props) => {
+const AddEntryModal = ({ modalOpen, onClose, onSubmit, error, diagnoses }: Props) => {
   const [type, setType] = useState<EntryType>();
 
   const onTypeChange = (event: SelectChangeEvent<string>) => {
@@ -50,7 +51,7 @@ const AddEntryModal = ({ modalOpen, onClose, onSubmit, error }: Props) => {
       {type ? 
       <DialogContent>
         {error && <Alert severity="error">{error}</Alert>}
-        <AddEntryForm onSubmit={onSubmit} onCancel={onClose} type={type}/>
+        <AddEntryForm onSubmit={onSubmit} onCancel={onClose} type={type} diagnoses={diagnoses}/>
       </DialogContent> :
       null
       }

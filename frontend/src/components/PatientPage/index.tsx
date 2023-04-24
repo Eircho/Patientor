@@ -97,6 +97,7 @@ const PatientPage = ({ patients, setPatients, diagnoses }: Props) => {
                 onSubmit={submitNewPatient}
                 error={error}
                 onClose={closeModal}
+                diagnoses={diagnoses}
             />
             <Button variant="contained" onClick={() => openModal()}>
                 Add New Entry

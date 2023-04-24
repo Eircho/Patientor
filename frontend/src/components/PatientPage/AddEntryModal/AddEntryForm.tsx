@@ -2,15 +2,16 @@ import { useState, SyntheticEvent } from "react";
 
 import {  TextField, Grid, Button, InputLabel, Select, MenuItem, SelectChangeEvent, Input  } from '@mui/material';
 
-import { Discharge, EntryFormValues, EntryType, HealthCheckRating, SickLeave } from "../../../types";
+import { Discharge, EntryFormValues, EntryType, HealthCheckRating, SickLeave, Diagnosis } from "../../../types";
 
 interface Props {
   onCancel: () => void;
   onSubmit: (values: EntryFormValues) => void;
   type: EntryType
+  diagnoses: Diagnosis[]
 }
 
-const AddEntryForm = ({ onCancel, onSubmit, type }: Props) => {
+const AddEntryForm = ({ onCancel, onSubmit, type, diagnoses }: Props) => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [specialist, setSpecialist] = useState('');
@@ -63,15 +64,6 @@ const AddEntryForm = ({ onCancel, onSubmit, type }: Props) => {
     }
   };
 
-  const createCodesArray = (value: string | undefined) => {
-    if (value) {
-      const codeArray = value.split(" ");
-      return setCodes(codeArray);
-    }
-
-    return setCodes([]);
-  };
-
   const onRatingChange = (event: SelectChangeEvent<string>) => {
     event.preventDefault();
     if ( typeof event.target.value === "string") {
@@ -81,6 +73,14 @@ const AddEntryForm = ({ onCancel, onSubmit, type }: Props) => {
       if (rating) {
         setHealthCheckRating(rating);
       }
+    }
+  };
+
+  const onCodeChange = (event: SelectChangeEvent<string>) => {
+    event.preventDefault();
+    if ( typeof event.target.value === "string") {
+      const value = event.target.value;
+      setCodes([value]);
     }
   };
 
@@ -121,12 +121,20 @@ const AddEntryForm = ({ onCancel, onSubmit, type }: Props) => {
               value={discharge.criteria}
               onChange={({ target }) => setDischarge( { date: discharge.date, criteria: target.value } )}
             />
-            <TextField style={{ marginTop: 20 }}
-              label="Diagnosis Codes"
+            <InputLabel style={{ marginTop: 20 }}>Diagnosis Codes</InputLabel>
+            <Select
+              label="Codes"
               fullWidth
-              value={diagnosisCodes}
-              onChange={({ target }) => createCodesArray(target.value)}
-            />
+              value={`${diagnosisCodes}` || ""}
+              onChange={onCodeChange}
+              defaultValue=""
+            >
+            {Object.values(diagnoses).map(d =>
+              <MenuItem key={d.code} value={d.code}>
+                {d.code}
+              </MenuItem>
+            )}
+            </Select>
     
             <Grid style={{ marginTop: 20 }}>
               <Grid item>
@@ -192,12 +200,20 @@ const AddEntryForm = ({ onCancel, onSubmit, type }: Props) => {
               </MenuItem>
             )}
             </Select>
-            <TextField style={{ marginTop: 20 }}
-              label="Diagnosis Codes"
+            <InputLabel style={{ marginTop: 20 }}>Diagnosis Codes</InputLabel>
+            <Select
+              label="Codes"
               fullWidth
-              value={diagnosisCodes}
-              onChange={({ target }) => createCodesArray(target.value)}
-            />
+              value={`${diagnosisCodes}` || ""}
+              onChange={onCodeChange}
+              defaultValue=""
+            >
+            {Object.values(diagnoses).map(d =>
+              <MenuItem key={d.code} value={d.code}>
+                {d.code}
+              </MenuItem>
+            )}
+            </Select>
     
             <Grid style={{ marginTop: 20 }}>
               <Grid item>
@@ -269,12 +285,20 @@ const AddEntryForm = ({ onCancel, onSubmit, type }: Props) => {
               value={sickLeave?.endDate || ""}
               onChange={({ target }) => setSickLeave( { endDate: target.value, startDate: sickLeave?.startDate } )}
             />
-            <TextField style={{ marginTop: 20 }}
-              label="Diagnosis Codes"
+            <InputLabel style={{ marginTop: 20 }}>Diagnosis Codes</InputLabel>
+            <Select
+              label="Codes"
               fullWidth
-              value={diagnosisCodes}
-              onChange={({ target }) => createCodesArray(target.value)}
-            />
+              value={`${diagnosisCodes}` || ""}
+              onChange={onCodeChange}
+              defaultValue=""
+            >
+            {Object.values(diagnoses).map(d =>
+              <MenuItem key={d.code} value={d.code}>
+                {d.code}
+              </MenuItem>
+            )}
+            </Select>
     
             <Grid style={{ marginTop: 20 }}>
               <Grid item>
